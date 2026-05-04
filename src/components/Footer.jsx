@@ -4,9 +4,9 @@ import Toast from './Toast'
 import { useToast } from '../hooks/useToast'
 
 const SOCIALS = [
-  { label: 'Instagram', href: '#' },
-  { label: 'Telegram',  href: '#' },
-  { label: 'ВКонтакте', href: '#' },
+  { label: 'Telegram',  href: 'https://t.me/OlgaMerdjanova' },
+  { label: 'ВКонтакте', href: 'https://vk.ru/id84620412' },
+  { label: 'WhatsApp',  href: 'https://wa.me/79649085822' },
 ]
 
 function ContactForm() {
@@ -52,6 +52,9 @@ function ContactForm() {
         >
           Отправить заявку
         </button>
+        <p className="text-muted text-xs text-center mt-3">
+          Демо-версия · Форма подключается при запуске проекта
+        </p>
       </form>
       <Toast show={show} message="Заявка отправлена! Свяжемся в течение часа." />
     </>

@@ -1,5 +1,7 @@
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
+import Toast from './Toast'
+import { useToast } from '../hooks/useToast'
 
 // ─── Данные ───────────────────────────────────────────────────────────────────
 
@@ -246,11 +248,13 @@ function ResultRow({ label, min, max, bold }) {
 
 function Result({ selections, onReset }) {
   const result = calculate(selections)
-  const [submitted, setSubmitted] = useState(false)
+  const { show, trigger } = useToast()
+  const { register, handleSubmit, reset, formState: { errors } } = useForm()
 
-  const { register, handleSubmit, formState: { errors } } = useForm()
-
-  const onSubmit = () => setSubmitted(true)
+  const onSubmit = () => {
+    trigger()
+    reset()
+  }
 
   return (
     <div className="space-y-6">
@@ -302,53 +306,49 @@ function Result({ selections, onReset }) {
 
       {/* Форма заявки */}
       <div className="bg-dark rounded-2xl p-8">
-        {submitted ? (
-          <div className="text-center py-4">
-            <p className="font-heading text-2xl italic text-white mb-2">Заявка отправлена!</p>
-            <p className="text-muted">Мы свяжемся с вами в течение часа.</p>
+        <h3 className="font-heading text-2xl italic text-white mb-2">
+          Хотите точный расчёт?
+        </h3>
+        <p className="text-muted text-sm mb-6">
+          Оставьте заявку — ответим в течение часа с учётом ваших параметров.
+        </p>
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+          <div>
+            <input
+              {...register('name', { required: 'Введите имя' })}
+              placeholder="Ваше имя"
+              className="w-full bg-[#3d3128] text-white placeholder-muted rounded-lg px-4 py-3 text-sm border border-[#4d3d2e] focus:outline-none focus:border-accent"
+            />
+            {errors.name && <p className="text-accent text-xs mt-1">{errors.name.message}</p>}
           </div>
-        ) : (
-          <>
-            <h3 className="font-heading text-2xl italic text-white mb-2">
-              Хотите точный расчёт?
-            </h3>
-            <p className="text-muted text-sm mb-6">
-              Оставьте заявку — ответим в течение часа с учётом ваших параметров.
-            </p>
-            <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-              <div>
-                <input
-                  {...register('name', { required: 'Введите имя' })}
-                  placeholder="Ваше имя"
-                  className="w-full bg-[#3d3128] text-white placeholder-muted rounded-lg px-4 py-3 text-sm border border-[#4d3d2e] focus:outline-none focus:border-accent"
-                />
-                {errors.name && <p className="text-accent text-xs mt-1">{errors.name.message}</p>}
-              </div>
-              <div>
-                <input
-                  {...register('brand')}
-                  placeholder="Название бренда (необязательно)"
-                  className="w-full bg-[#3d3128] text-white placeholder-muted rounded-lg px-4 py-3 text-sm border border-[#4d3d2e] focus:outline-none focus:border-accent"
-                />
-              </div>
-              <div>
-                <input
-                  {...register('telegram', { required: 'Введите Telegram или телефон' })}
-                  placeholder="Telegram или телефон"
-                  className="w-full bg-[#3d3128] text-white placeholder-muted rounded-lg px-4 py-3 text-sm border border-[#4d3d2e] focus:outline-none focus:border-accent"
-                />
-                {errors.telegram && <p className="text-accent text-xs mt-1">{errors.telegram.message}</p>}
-              </div>
-              <button
-                type="submit"
-                className="w-full bg-accent hover:bg-accent2 text-white font-medium py-4 rounded-lg transition-colors"
-              >
-                Отправить заявку
-              </button>
-            </form>
-          </>
-        )}
+          <div>
+            <input
+              {...register('brand')}
+              placeholder="Название бренда (необязательно)"
+              className="w-full bg-[#3d3128] text-white placeholder-muted rounded-lg px-4 py-3 text-sm border border-[#4d3d2e] focus:outline-none focus:border-accent"
+            />
+          </div>
+          <div>
+            <input
+              {...register('telegram', { required: 'Введите Telegram или телефон' })}
+              placeholder="Telegram или телефон"
+              className="w-full bg-[#3d3128] text-white placeholder-muted rounded-lg px-4 py-3 text-sm border border-[#4d3d2e] focus:outline-none focus:border-accent"
+            />
+            {errors.telegram && <p className="text-accent text-xs mt-1">{errors.telegram.message}</p>}
+          </div>
+          <button
+            type="submit"
+            className="w-full bg-accent hover:bg-accent2 text-white font-medium py-4 rounded-lg transition-colors"
+          >
+            Отправить заявку
+          </button>
+          <p className="text-muted text-xs text-center mt-3">
+            Демо-версия · Форма подключается при запуске проекта
+          </p>
+        </form>
       </div>
+
+      <Toast show={show} message="Заявка отправлена! Свяжемся в течение часа." />
     </div>
   )
 }
